@@ -50,7 +50,7 @@ class NotificationSoundDialog(wx.Dialog):
 			wx.RadioBox(
 				self,
 				label=_("Match type"),
-				choices=(_("&Plain text"), _("&Regular expression")),
+				choices=(_("Plain &text"), _("&Regular expression")),
 				style=wx.RA_SPECIFY_ROWS,
 			),
 		)
@@ -59,6 +59,9 @@ class NotificationSoundDialog(wx.Dialog):
 		sHelper.addItem(
 			wx.Button(self, label=_('Choose &file...')),
 		).Bind(wx.EVT_BUTTON, self.onChooseSound)
+		sHelper.addItem(
+			wx.Button(self, label=_('&Play')),
+		).Bind(wx.EVT_BUTTON, self.onPlay)
 		sHelper.addDialogDismissButtons(wx.OK | wx.CANCEL, separated=True)
 		self.SetSizer(sHelper.sizer)
 		sHelper.sizer.Fit(self)
@@ -90,6 +93,14 @@ class NotificationSoundDialog(wx.Dialog):
 				self.soundCtrl.SetValue(dialog.GetPath())
 		finally:
 			dialog.Destroy()
+
+	def onPlay(self, evt):
+		soundPath = self.soundCtrl.GetValue()
+		if soundPath:
+			try:
+				nvwave.playWaveFile(soundPath)
+			except OSError:
+				pass
 
 	def onOk(self, evt):
 		text = self.textCtrl.GetValue()
